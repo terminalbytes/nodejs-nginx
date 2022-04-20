@@ -1,0 +1,400 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "description": "# Steps to test:\n- Expand an API and click `Try it out` button.\n- If a route is protected (lock icon), you first need to sign up using the `/signup` route.\n- The `/signup` route will give you a `accessToken` which can then be used for all subsequent API calls by clicking the `Authorize` button.\n- Oh and this API is rate limited to `5r/s`.",
+    "version": "1.0.0",
+    "title": "Nodejs Nginx Recipe CRUD API 🧑‍💻",
+    "contact": {
+      "email": "hemant6488@gmail.com"
+    },
+    "license": {
+      "name": "PRIVATE"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8084/"
+    }
+  ],
+  "tags": [
+    {
+      "name": "recipes",
+      "description": "A sick recipe management API"
+    },
+    {
+      "name": "user",
+      "description": "User related stuff for protected routes"
+    }
+  ],
+  "paths": {
+    "/api/signup": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Add a new user to the database",
+        "requestBody": {
+          "description": "Fields required to create a new user in the backend. Password with be hashed with a salt.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/user"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User created",
+            "content": {}
+          },
+          "409": {
+            "description": "User already exists",
+            "content": {}
+          },
+          "422": {
+            "description": "Validation error / unprocessable entity",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/api/login": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Login and get bearer token to use in the APIs that require authentication.",
+        "requestBody": {
+          "description": "The same username and password that were used to sign up.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/user"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User created",
+            "content": {}
+          },
+          "401": {
+            "description": "Authentication failed",
+            "content": {}
+          },
+          "422": {
+            "description": "Validation error / unprocessable entity",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/api/recipes": {
+      "get": {
+        "tags": [
+          "recipes"
+        ],
+        "summary": "Get all recipes",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of records to fetch (max 100)",
+            "required": false,
+            "default": 10,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Offset to start fetching records from",
+            "required": false,
+            "default": 10,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {}
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "recipes"
+        ],
+        "summary": "Add a new recipes to the database",
+        "requestBody": {
+          "description": "Recipe object that needs to be added to the database.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/recipe"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Resource created",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "422": {
+            "description": "Validation error / unprocessable entity",
+            "content": {}
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/recipes/{recipeId}": {
+      "get": {
+        "tags": [
+          "recipes"
+        ],
+        "summary": "Get recipe by id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "recipeId",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true,
+            "description": "Recipe Id (int)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success, yay!",
+            "content": {}
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "recipes"
+        ],
+        "summary": "Update a specific recipe",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "recipeId",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true,
+            "description": "Numeric ID of the recipe to update"
+          }
+        ],
+        "requestBody": {
+          "description": "This is the updated recipe object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/recipe"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Recipe updated",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "422": {
+            "description": "You screwed up, lol",
+            "content": {}
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "recipes"
+        ],
+        "summary": "Delete a specific recipe",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "recipeId",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true,
+            "description": "Numeric ID of the recipe to update"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Recipe deleted",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/recipes/{recipeId}/rating": {
+      "post": {
+        "tags": [
+          "recipes"
+        ],
+        "summary": "Add a new rating for a recipe",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "recipeId",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true,
+            "description": "Numeric ID of the recipe you want to update"
+          }
+        ],
+        "requestBody": {
+          "description": "Object containing the rating",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/rating"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Rating submitted",
+            "content": {}
+          },
+          "404": {
+            "description": "Recipe not found",
+            "content": {}
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "recipe": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the recipe"
+          },
+          "time": {
+            "type": "string",
+            "description": "Preparation Time"
+          },
+          "difficulty": {
+            "type": "integer",
+            "format": "int32",
+            "enum": [
+              1,
+              2,
+              3
+            ],
+            "description": "Difficulty rating (1 to 3, 1 being the easiest)"
+          },
+          "vegetarian": {
+            "type": "boolean",
+            "description": "Is the recipe vegetarian?"
+          },
+          "ingredients": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of ingredients"
+          },
+          "steps": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Steps to prepare the dish"
+          },
+          "deleted": {
+            "type": "boolean",
+            "default": false,
+            "description": "Is the recipe deleted?"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the recipe was created"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the recipe was last updated"
+          }
+        }
+      },
+      "user": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Email of the user"
+          },
+          "password": {
+            "type": "string",
+            "description": "Password of the user"
+          }
+        }
+      },
+      "rating": {
+        "type": "object",
+        "properties": {
+          "rating": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Rating for this recipe"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}

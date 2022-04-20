@@ -1,0 +1,59 @@
+version: "3.7"
+services:
+  postgres:
+    image: postgres
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_NAME}"]
+      interval: 2s
+      timeout: 5s
+      retries: 10
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - '5432:5432'
+    logging:
+      driver: none
+    volumes:
+      - postgres-data:/var/lib/postgresql/data/
+
+  nginx:
+    depends_on:
+      - backend
+    build:
+      context: nginx/
+    container_name: "nginx"
+    ports:
+      - "8084:8084"
+
+  backend:
+    build:
+      context: app/
+    environment:
+      APP_PRIVATE_KEY: ${APP_PRIVATE_KEY}
+      DB_SCHEMA: public
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_HOST: postgres
+      PORT: ${PORT}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    container_name: "swagger-ui"
+    ports:
+      - "8082:8080"
+    volumes:
+      - ./openapi-spec/openapi.json:/openapi.json
+    environment:
+      SWAGGER_JSON: /openapi.json
+
+
+volumes:
+  postgres-data:
+        driver: local

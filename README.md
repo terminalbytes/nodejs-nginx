@@ -1,6 +1,6 @@
 [![Build](https://github.com/terminalbytes/nodejs-nginx/workflows/Build/badge.svg)](https://github.com/terminalbytes/nodejs-nginx/actions/workflows/app-build.yml)&nbsp;&nbsp; &nbsp; &nbsp;[![Tests](https://github.com/terminalbytes/nodejs-nginx/workflows/Tests/badge.svg)](https://github.com/terminalbytes/nodejs-nginx/actions/workflows/test.yml)
 
-# Recipe Service
+# Nodejs Service without a web framework (no Express, or any other micro framework)
   - [Introduction](#introduction)
     - [Try It Live](#try-it-live)
   - [Setup](#setup)

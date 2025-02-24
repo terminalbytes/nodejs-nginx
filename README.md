@@ -16,7 +16,7 @@
     - [Server Performance during load testing](#server-performance-during-load-testing)
 
 ## Introduction
-A production ready, scalable backend CRUD API for managing recipes. Build with Docker, Nginx, Node.js, TypeScript, and PostgreSQL.
+A production ready, scalable backend CRUD API for managing recipes. Built with Docker, Nginx, Node.js, TypeScript, and PostgreSQL.
 
 ## Setup
 Clone the repository and run
